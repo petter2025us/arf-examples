@@ -4,6 +4,17 @@
 
 This repo does not reproduce, expose, or depend on ARF's actual core engine (Bayesian risk fusion, epistemic-uncertainty gating, causal counterfactuals, cryptographic audit trails) — that's proprietary to ARF AI and unrelated to this project. What's here is a self-contained, standalone implementation: a static policy-as-code gate plus an interceptor pattern that wraps it around an LLM proposal generator.
 
+## Status & next steps
+
+**Last updated:** 2026-09-06. **Ground truth:** this is a complete, tested, standalone reference implementation — not wired into any live sales pipeline. 19/19 tests pass. It exists as a worked example and as pilot-conversation collateral, not as production software running against real customer proposals today.
+
+**Next steps, if this gets picked up further:**
+
+1. **Real OPA deployment:** `governance_demo/opa_http_client.py` is written but never exercised against a live OPA sidecar — stand one up (`docker run openpolicyagent/opa`) and confirm `solar_compliance.rego` evaluates identically to `rules.py` on the same fixtures (that parity is currently asserted by convention, not tested automatically).
+2. **Wire to a real LLM:** `SolarSalesPipeline.submit()` takes any `generate_proposal` callable — plugging in an actual model call (Claude, GPT, etc.) instead of the test fixtures in `tests/` would be the first real integration test.
+3. **Extend to the sibling project:** the residential-battery-lease funnel referenced throughout this README (see "Extending this to another vertical" below) has the identical claim-discipline problem this gate solves — porting the pattern there is the most concrete next application, not a new vertical.
+4. **Audit trail persistence:** `GovernanceDecision.audit_hash` is computed but never written anywhere durable — a real deployment needs it logged to storage a compliance review can actually query later, not just returned in-process.
+
 ## Why this exists
 
 An LLM drafting a solar/battery sales proposal can produce two kinds of dangerous claims without knowing it's dangerous:
