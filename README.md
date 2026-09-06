@@ -1,8 +1,8 @@
-# Residential Solar Sales — Governance Gate (Worked Example)
+# Residential Solar Sales — Governance Gate
 
-**This is a demo-safe, advisory worked example — not the ARF core engine.** It shows the pattern ARF recommends for a specific vertical (residential solar/battery sales): keep hard business/legal redlines in a deterministic rules engine, never delegated to an LLM's own judgment, and never let a customer-facing claim reach a CRM or a customer without passing a policy gate first.
+**This is an independent project, not ARF AI product collateral.** It's a policy-as-code gate for a residential solar/battery sales pipeline, built using a governance pattern inspired by [ARF AI](https://arf-ai.com)'s approach to AI governance: keep hard business/legal redlines in a deterministic rules engine, never delegated to an LLM's own judgment, and never let a customer-facing claim reach a CRM or a customer without passing a policy gate first.
 
-ARF's actual core engine — Bayesian risk fusion, epistemic-uncertainty gating (CUDL), causal counterfactuals, cryptographic audit trails — is proprietary and not reproduced here. What's here is the simpler, illustrative layer: a static policy-as-code gate plus the interceptor pattern that wraps it around an LLM proposal generator.
+This repo does not reproduce, expose, or depend on ARF's actual core engine (Bayesian risk fusion, epistemic-uncertainty gating, causal counterfactuals, cryptographic audit trails) — that's proprietary to ARF AI and unrelated to this project. What's here is a self-contained, standalone implementation: a static policy-as-code gate plus an interceptor pattern that wraps it around an LLM proposal generator.
 
 ## Why this exists
 
@@ -11,7 +11,7 @@ An LLM drafting a solar/battery sales proposal can produce two kinds of dangerou
 1. **Guaranteed tax-credit language** to a customer with no tax liability to offset — the federal ITC is a credit against tax owed, not a rebate; promising it as guaranteed cash to a zero-liability household is a real compliance problem.
 2. **"Eliminate 100% of your bill"** claims in a NEM 3.0 / avoided-cost territory (California's PG&E, SCE, SDG&E) without a battery attached — under avoided-cost export pricing, solar sent back to the grid is bought at a fraction of retail price, so a no-battery system usually can't back up a 100%-offset claim.
 
-Both are the same category of problem this project's ga-battery work has run into repeatedly: an LLM (or a human sales script) asserting something specific and false because it sounds persuasive, not because it's substantiated. This example generalizes that discipline into a reusable gate.
+Both are the same category of problem a separate residential-battery-lease sales funnel (same author) has run into repeatedly: an LLM (or a human sales script) asserting something specific and false because it sounds persuasive, not because it's substantiated. This project generalizes that discipline into a reusable gate.
 
 ## What's here
 
@@ -49,10 +49,11 @@ Choose `fail_closed=True` for a production deployment where the Rego policy migh
 
 ## What this is not
 
-- Not a replacement for ARF's core risk-scoring engine (Bayesian fusion, CUDL, memory-augmented correction) — this is a static deterministic gate, appropriate for hard business/legal redlines, not for the probabilistic risk-scoring problem ARF's core product solves.
-- Not wired into any live sales pipeline. This is a worked example / pilot-conversation artifact.
+- Not affiliated with, endorsed by, or built on ARF AI's proprietary software — it's an independent implementation of a similar governance pattern, nothing more.
+- Not a full risk-scoring engine — this is a static deterministic gate, appropriate for hard business/legal redlines, not for probabilistic risk scoring.
+- Not wired into any live sales pipeline yet. This is a standalone, tested reference implementation.
 - Not a claim that OPA/Rego is required — the pattern (deterministic gate, LLM self-correction loop, audit hash) is what matters; the Rego file is one legitimate implementation of it.
 
 ## Extending this to another vertical
 
-The pattern generalizes past solar: define the redlines that must never be LLM-judgment calls (price floors, regulated claim language, jurisdiction-specific rules), express them as a small set of deterministic checks, and wrap the LLM's output in the same evaluate -> allow/block -> feedback-and-retry -> escalate loop. The residential-battery-lease claim discipline already documented in `ga-battery/TECHNICAL_OVERVIEW.md` (no bill-savings numbers, no un-confirmed incentive figures) is the same shape of problem and could use the identical pipeline structure.
+The pattern generalizes past solar: define the redlines that must never be LLM-judgment calls (price floors, regulated claim language, jurisdiction-specific rules), express them as a small set of deterministic checks, and wrap the LLM's output in the same evaluate -> allow/block -> feedback-and-retry -> escalate loop. A residential-battery-lease sales funnel (separate project, same author) has an equivalent claim-discipline problem — no bill-savings numbers, no un-confirmed incentive figures — and could use the identical pipeline structure.
